@@ -105,3 +105,8 @@ public enum TouchUnit {
     /// After value
     case suffix(of: String)
 }
+
+public enum MarkerPosition {
+    case front
+    case back
+}

@@ -15,16 +15,19 @@ internal struct TouchOverlay<T>: ViewModifier where T: CTChartData {
     
     @ObservedObject private var chartData: T
     let minDistance: CGFloat
+    let position: MarkerPosition
     
     internal init(
         chartData: T,
         specifier: String,
         formatter: NumberFormatter?,
         unit: TouchUnit,
-        minDistance: CGFloat
+        minDistance: CGFloat,
+        position: MarkerPosition
     ) {
         self.chartData = chartData
         self.minDistance = minDistance
+        self.position = position
         self.chartData.infoView.touchSpecifier = specifier
         self.chartData.infoView.touchFormatter = formatter
         self.chartData.infoView.touchUnit = unit
@@ -50,6 +53,7 @@ internal struct TouchOverlay<T>: ViewModifier where T: CTChartData {
                         if chartData.infoView.isTouchCurrent {
                             chartData.getTouchInteraction(touchLocation: chartData.infoView.touchLocation,
                                                           chartSize: geo.frame(in: .local))
+                            .zIndex(position == .front ? 1 : -1)
                         }
                     }
                 }
@@ -91,13 +95,15 @@ extension View {
         specifier: String = "%.0f",
         formatter: NumberFormatter? = nil,
         unit: TouchUnit = .none,
-        minDistance: CGFloat = 0
+        minDistance: CGFloat = 0,
+        markerPosition: MarkerPosition = .front
     ) -> some View {
         self.modifier(TouchOverlay(chartData: chartData,
                                    specifier: specifier,
                                    formatter: formatter,
                                    unit: unit,
-                                   minDistance: minDistance))
+                                   minDistance: minDistance,
+                                   position: markerPosition))
     }
     #elseif os(tvOS)
     /**

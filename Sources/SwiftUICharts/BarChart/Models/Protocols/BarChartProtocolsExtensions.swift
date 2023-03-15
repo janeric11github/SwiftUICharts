@@ -35,6 +35,11 @@ extension CTBarChartDataProtocol where Self.CTStyle.Mark == BarMarkerType {
                 case .topTrailing(let colour, let style):
                     MarkerTopTrailing(position: position)
                         .stroke(colour, style: style)
+                case .fill(let colour):
+                    let width = self.infoView.chartSize.width / CGFloat((dataSets as! BarDataSet).dataPoints.count)
+                    colour
+                        .frame(width: width)
+                        .position(x: position.x, y: self.infoView.chartSize.midY)
                 }
             }
         }

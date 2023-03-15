@@ -49,4 +49,6 @@ public enum BarMarkerType: MarkerType {
     case topLeading(colour: Color = Color.primary, style: StrokeStyle = StrokeStyle())
     /// From top and trailing edges meeting at a specified point.
     case topTrailing(colour: Color = Color.primary, style: StrokeStyle = StrokeStyle())
+    
+    case fill(colour: Color = Color.primary)
 }
