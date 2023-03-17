@@ -25,6 +25,7 @@ internal struct VerticalGridView<T>: View where T: CTLineBarChartDataProtocol {
             .trim(to: animationValue)
             .stroke(chartData.chartStyle.xAxisGridStyle.lineColour,
                     style: StrokeStyle(lineWidth: chartData.chartStyle.xAxisGridStyle.lineWidth,
+                                       lineCap: chartData.chartStyle.xAxisGridStyle.lineCap,
                                        dash: chartData.chartStyle.xAxisGridStyle.dash,
                                        dashPhase: chartData.chartStyle.xAxisGridStyle.dashPhase))
             .frame(width: chartData.chartStyle.xAxisGridStyle.lineWidth)

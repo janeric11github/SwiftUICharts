@@ -27,6 +27,8 @@ public struct GridStyle {
      */
     public var lineWidth: CGFloat
     
+    public var lineCap: CGLineCap
+    
     /**
      Dash
      */
@@ -48,12 +50,14 @@ public struct GridStyle {
         numberOfLines: Int = 10,
         lineColour: Color = Color(.gray).opacity(0.25),
         lineWidth: CGFloat = 1,
+        lineCap: CGLineCap = .round,
         dash: [CGFloat] = [10],
         dashPhase: CGFloat = 0
     ) {
         self.numberOfLines = numberOfLines
         self.lineColour = lineColour
         self.lineWidth = lineWidth
+        self.lineCap = lineCap
         self.dash = dash
         self.dashPhase = dashPhase
     }

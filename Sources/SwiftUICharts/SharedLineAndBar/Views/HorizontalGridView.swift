@@ -25,6 +25,7 @@ internal struct HorizontalGridView<T>: View where T: CTLineBarChartDataProtocol 
             .trim(to: animationValue)
             .stroke(chartData.chartStyle.yAxisGridStyle.lineColour,
                     style: StrokeStyle(lineWidth: chartData.chartStyle.yAxisGridStyle.lineWidth,
+                                       lineCap: chartData.chartStyle.yAxisGridStyle.lineCap,
                                        dash: chartData.chartStyle.yAxisGridStyle.dash,
                                        dashPhase: chartData.chartStyle.yAxisGridStyle.dashPhase))
             .frame(height: chartData.chartStyle.yAxisGridStyle.lineWidth)
