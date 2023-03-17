@@ -41,6 +41,8 @@ public struct ChartViewData {
      */
     var xAxisLabelHeights: [CGFloat] = []
     
+    var xAxisLabelPadding: CGFloat = 0
+    
     /**
      Width of the x axis title label once
      it has been rotated.
@@ -80,6 +82,8 @@ public struct ChartViewData {
      Experimental
      */
     var yAxisTitleHeight: CGFloat = 0
+    
+    var yAxisLabelPadding: CGFloat = 0
     
     /**
      Experimental

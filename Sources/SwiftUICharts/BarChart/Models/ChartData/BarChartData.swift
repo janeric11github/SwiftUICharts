@@ -98,17 +98,13 @@ public final class BarChartData: CTBarChartDataProtocol, GetDataProtocol, Publis
                 if let labelArray = self.xAxisLabels {
                     HStack(spacing: 0) {
                         ForEach(labelArray.indices, id: \.self) { i in
-                            VStack {
-                                if self.chartStyle.xAxisLabelPosition == .bottom {
-                                    RotatedText(chartData: self, label: labelArray[i], rotation: angle)
-                                    Spacer()
-                                } else {
-                                    Spacer()
-                                    RotatedText(chartData: self, label: labelArray[i], rotation: angle)
-                                }
-                            }
-                            .frame(width: self.viewData.xAxislabelWidths.max(),
-                                   height: self.viewData.xAxisLabelHeights.max())
+                            RotatedText(chartData: self, label: labelArray[i], rotation: angle)
+                            .frame(
+                                width: self.viewData.xAxislabelWidths.max(),
+                                height: self.viewData.xAxisLabelHeights.max(),
+                                alignment: (self.chartStyle.xAxisLabelPosition == .bottom)
+                                ? .top
+                                : .bottom)
                             if i != labelArray.count - 1 {
                                 Spacer()
                                     .frame(minWidth: 0, maxWidth: 500)

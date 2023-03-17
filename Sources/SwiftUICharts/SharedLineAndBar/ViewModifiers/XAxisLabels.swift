@@ -13,10 +13,13 @@ import SwiftUI
 internal struct XAxisLabels<T>: ViewModifier where T: CTLineBarChartDataProtocol {
     
     @ObservedObject private var chartData: T
+    private let padding: CGFloat
     
-    internal init(chartData: T) {
+    internal init(chartData: T, padding: CGFloat) {
         self.chartData = chartData
+        self.padding = padding
         self.chartData.viewData.hasXAxisLabels = true
+        self.chartData.viewData.xAxisLabelPadding = padding
     }
     
     internal func body(content: Content) -> some View {
@@ -24,17 +27,17 @@ internal struct XAxisLabels<T>: ViewModifier where T: CTLineBarChartDataProtocol
             switch chartData.chartStyle.xAxisLabelPosition {
             case .bottom:
                 if chartData.isGreaterThanTwo() {
-                    VStack {
+                    VStack(spacing: 0) {
                         content
-                        chartData.getXAxisLabels().padding(.top, 2)
+                        chartData.getXAxisLabels().padding(.top, padding)
                         chartData.getXAxisTitle()
                     }
                 } else { content }
             case .top:
                 if chartData.isGreaterThanTwo() {
-                    VStack {
+                    VStack(spacing: 0) {
                         chartData.getXAxisTitle()
-                        chartData.getXAxisLabels().padding(.bottom, 2)
+                        chartData.getXAxisLabels().padding(.bottom, padding)
                         content
                     }
                 } else { content }
@@ -73,7 +76,10 @@ extension View {
      - Parameter chartData: Chart data model.
      - Returns: A  new view containing the chart with labels marking the x axis.
      */
-    public func xAxisLabels<T: CTLineBarChartDataProtocol>(chartData: T) -> some View {
-        self.modifier(XAxisLabels(chartData: chartData))
+    public func xAxisLabels<T: CTLineBarChartDataProtocol>(
+        chartData: T,
+        padding: CGFloat = 2
+    ) -> some View {
+        self.modifier(XAxisLabels(chartData: chartData, padding: padding))
     }
 }

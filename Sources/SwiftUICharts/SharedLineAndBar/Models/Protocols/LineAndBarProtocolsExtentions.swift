@@ -126,17 +126,15 @@ extension CTLineBarChartDataProtocol where Self: GetDataProtocol {
 
 extension CTLineBarChartDataProtocol {
    internal var yAxisPaddingHeight: CGFloat {
-        (self.viewData.xAxisLabelHeights.max() ?? 0) + self.viewData.xAxisTitleHeight
+       (self.viewData.xAxisLabelHeights.max() ?? 0)
+       + self.viewData.xAxisTitleHeight
+       + self.viewData.xAxisLabelPadding
     }
 }
 
 extension CTLineBarChartDataProtocol where Self: GetDataProtocol {
     public func getYAxisLabels() -> some View {
-        VStack {
-            if self.chartStyle.xAxisLabelPosition == .top {
-                Spacer()
-                    .frame(height: yAxisPaddingHeight)
-            }
+        VStack(alignment: (self.chartStyle.yAxisLabelPosition == .leading ? .trailing : .leading)) {
             ForEach(self.labelsArray.indices.reversed(), id: \.self) { i in
                 Text(LocalizedStringKey(self.labelsArray[i]))
                     .font(self.chartStyle.yAxisLabelFont)
@@ -158,15 +156,13 @@ extension CTLineBarChartDataProtocol where Self: GetDataProtocol {
                         .frame(minHeight: 0, maxHeight: 500)
                 }
             }
-            if self.chartStyle.xAxisLabelPosition == .bottom {
-                Spacer()
-                    .frame(height: yAxisPaddingHeight)
-            }
         }
         .ifElse(self.chartStyle.xAxisLabelPosition == .bottom, if: {
-            $0.padding(.top, -8)
+            $0
+                .padding(.bottom, yAxisPaddingHeight)
         }, else: {
-            $0.padding(.bottom, -8)
+            $0
+                .padding(.top, yAxisPaddingHeight)
         })
     }
 }
