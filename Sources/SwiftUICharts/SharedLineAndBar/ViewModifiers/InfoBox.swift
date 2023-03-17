@@ -11,20 +11,22 @@ import SwiftUI
 /**
  A view that displays information from `TouchOverlay`.
  */
-internal struct InfoBox<T>: ViewModifier where T: CTLineBarChartDataProtocol {
+internal struct InfoBox<T, V>: ViewModifier where T: CTLineBarChartDataProtocol, V: View {
     
+    @State private var boxFrame: CGRect = .zero
     @ObservedObject private var chartData: T
     private let height: CGFloat
+    private let customBox: ((T.DataPoint) -> V)?
     
     internal init(
         chartData: T,
-        height: CGFloat
+        height: CGFloat,
+        customBox: ((T.DataPoint) -> V)? = nil
     ) {
         self.chartData = chartData
         self.height = height
+        self.customBox = customBox
     }
-    
-    @State private var boxFrame: CGRect = CGRect(x: 0, y: 0, width: 0, height: 70)
     
     internal func body(content: Content) -> some View {
         Group {
@@ -34,12 +36,12 @@ internal struct InfoBox<T>: ViewModifier where T: CTLineBarChartDataProtocol {
             case .infoBox(let isStatic):
                 switch isStatic {
                 case true:
-                    VStack {
+                    VStack(spacing: 0) {
                         fixed
                         content
                     }
                 case false:
-                    VStack {
+                    VStack(spacing: 0) {
                         floating
                         content
                     }
@@ -52,21 +54,23 @@ internal struct InfoBox<T>: ViewModifier where T: CTLineBarChartDataProtocol {
     
     private var floating: some View {
         TouchOverlayBox(chartData: chartData,
-                        boxFrame: $boxFrame)
-            .position(x: chartData.setBoxLocation(touchLocation: chartData.infoView.touchLocation.x,
-                                                       boxFrame: boxFrame,
-                                                       chartSize: chartData.infoView.chartSize) - 6, // -6 to compensate for `.padding(.horizontal, 6)`
-                      y: height / 2)
-            .frame(height: height)
-            .padding(.horizontal, 6)
-            .zIndex(1)
+                        boxFrame: $boxFrame,
+                        content: customBox)
+        .position(
+            x: chartData.setBoxLocation(
+                touchLocation: chartData.infoView.touchLocation.x,
+                boxFrame: boxFrame,
+                chartSize: chartData.infoView.chartSize),
+            y: height / 2)
+        .frame(height: height)
+        .zIndex(1)
     }
     
     private var fixed: some View {
         TouchOverlayBox(chartData: chartData,
-                        boxFrame: $boxFrame)
+                        boxFrame: $boxFrame,
+                        content: customBox)
             .frame(height: height)
-            .padding(.horizontal, 6)
             .zIndex(1)
     }
 }
@@ -116,21 +120,21 @@ internal struct HorizontalInfoBox<T>: ViewModifier where T: CTLineBarChartDataPr
     
     private var floating: some View {
         TouchOverlayBox(chartData: chartData,
-                        boxFrame: $boxFrame)
+                        boxFrame: $boxFrame,
+                        content: { _ in EmptyView() })
             .position(x: 35,
                       y: chartData.setBoxLocation(touchLocation: chartData.infoView.touchLocation.y,
                                                        boxFrame: boxFrame,
                                                        chartSize: chartData.infoView.chartSize))
             .frame(width: width)
-            .padding(.horizontal, 6)
             .zIndex(1)
     }
     
     private var fixed: some View {
         TouchOverlayBox(chartData: chartData,
-                        boxFrame: $boxFrame)
+                        boxFrame: $boxFrame,
+                        content: { _ in EmptyView() })
             .frame(width: width)
-            .padding(.horizontal, 6)
             .zIndex(1)
     }
 }
@@ -142,11 +146,12 @@ extension View {
      - Returns: A  new view containing the chart with a view to
      display touch overlay information.
      */
-    public func infoBox<T: CTLineBarChartDataProtocol>(
+    public func infoBox<T: CTLineBarChartDataProtocol, V: View>(
         chartData: T,
-        height: CGFloat = 70
+        height: CGFloat = 70,
+        customBox: ((T.DataPoint) -> V)? = nil
     ) -> some View {
-        self.modifier(InfoBox(chartData: chartData, height: height))
+        self.modifier(InfoBox(chartData: chartData, height: height, customBox: customBox))
     }
 
     /**

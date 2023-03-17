@@ -10,18 +10,20 @@ import SwiftUI
 /**
  View that displays information from the touch events.
  */
-internal struct TouchOverlayBox<T: CTChartData>: View {
+internal struct TouchOverlayBox<T: CTChartData, Content: View>: View {
     
     @ObservedObject private var chartData: T
-    
     @Binding private var boxFrame: CGRect
+    private let content: ((T.DataPoint) -> Content)?
     
     internal init(
         chartData: T,
-        boxFrame: Binding<CGRect>
+        boxFrame: Binding<CGRect>,
+        content: ((T.DataPoint) -> Content)?
     ) {
         self.chartData = chartData
         self._boxFrame = boxFrame
+        self.content = content
     }
     
     internal var body: some View {
@@ -29,48 +31,61 @@ internal struct TouchOverlayBox<T: CTChartData>: View {
             if chartData.chartStyle.infoBoxContentAlignment == .vertical {
                 VStack(alignment: .leading, spacing: 0) {
                     ForEach(chartData.infoView.touchOverlayInfo, id: \.id) { point in
-                        chartData.infoDescription(info: point)
-                            .font(chartData.chartStyle.infoBoxDescriptionFont)
-                            .foregroundColor(chartData.chartStyle.infoBoxDescriptionColour)
-                        chartData.infoValueUnit(info: point)
-                            .font(chartData.chartStyle.infoBoxValueFont)
-                            .foregroundColor(chartData.chartStyle.infoBoxValueColour)
-                        chartData.infoLegend(info: point)
-                            .foregroundColor(chartData.chartStyle.infoBoxDescriptionColour)
+                        if let content {
+                            content(point)
+                        } else {
+                            chartData.infoDescription(info: point)
+                                .font(chartData.chartStyle.infoBoxDescriptionFont)
+                                .foregroundColor(chartData.chartStyle.infoBoxDescriptionColour)
+                            chartData.infoValueUnit(info: point)
+                                .font(chartData.chartStyle.infoBoxValueFont)
+                                .foregroundColor(chartData.chartStyle.infoBoxValueColour)
+                            chartData.infoLegend(info: point)
+                                .foregroundColor(chartData.chartStyle.infoBoxDescriptionColour)
+                        }
                     }
                 }
             } else {
                 HStack {
                     ForEach(chartData.infoView.touchOverlayInfo, id: \.id) { point in
-                        chartData.infoLegend(info: point)
-                            .foregroundColor(chartData.chartStyle.infoBoxDescriptionColour)
-                            .layoutPriority(1)
-                        chartData.infoDescription(info: point)
-                            .font(chartData.chartStyle.infoBoxDescriptionFont)
-                            .foregroundColor(chartData.chartStyle.infoBoxDescriptionColour)
-                        chartData.infoValueUnit(info: point)
-                            .font(chartData.chartStyle.infoBoxValueFont)
-                            .foregroundColor(chartData.chartStyle.infoBoxValueColour)
+                        if let content {
+                            content(point)
+                        } else {
+                            chartData.infoLegend(info: point)
+                                .foregroundColor(chartData.chartStyle.infoBoxDescriptionColour)
+                                .layoutPriority(1)
+                            chartData.infoDescription(info: point)
+                                .font(chartData.chartStyle.infoBoxDescriptionFont)
+                                .foregroundColor(chartData.chartStyle.infoBoxDescriptionColour)
+                            chartData.infoValueUnit(info: point)
+                                .font(chartData.chartStyle.infoBoxValueFont)
+                                .foregroundColor(chartData.chartStyle.infoBoxValueColour)
+                        }
                     }
                 }
             }
         }
-        .padding(.all, 8)
         .background(
             GeometryReader { geo in
                 if chartData.infoView.isTouchCurrent {
-                    RoundedRectangle(cornerRadius: 5.0, style: .continuous)
-                        .fill(chartData.chartStyle.infoBoxBackgroundColour)
-                        .overlay(
+                    Group {
+                        if content == nil {
                             RoundedRectangle(cornerRadius: 5.0, style: .continuous)
-                                .stroke(chartData.chartStyle.infoBoxBorderColour, style: chartData.chartStyle.infoBoxBorderStyle)
-                        )
-                        .onAppear {
-                            self.boxFrame = geo.frame(in: .local)
+                                .fill(chartData.chartStyle.infoBoxBackgroundColour)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 5.0, style: .continuous)
+                                        .stroke(chartData.chartStyle.infoBoxBorderColour, style: chartData.chartStyle.infoBoxBorderStyle)
+                                )
+                        } else {
+                            Color.clear
                         }
-                        .onChange(of: geo.frame(in: .local)) { frame in
-                            self.boxFrame = frame
-                        }
+                    }
+                    .onAppear {
+                        self.boxFrame = geo.frame(in: .local)
+                    }
+                    .onChange(of: geo.frame(in: .local)) { frame in
+                        self.boxFrame = frame
+                    }
                 }
             }
         )

@@ -147,7 +147,10 @@ extension CTLineBarChartDataProtocol {
         } else {
             returnPoint = touchLocation
         }
-        return returnPoint + (self.viewData.yAxisLabelWidth.max() ?? 0) + self.viewData.yAxisTitleWidth + (self.viewData.hasYAxisLabels ? 4 : 0) // +4 For Padding
+        return returnPoint
+        + (self.viewData.yAxisLabelWidth.max() ?? 0)
+        + self.viewData.yAxisTitleWidth
+        + self.viewData.yAxisLabelPadding
     }
 }
 extension CTLineBarChartDataProtocol where Self: isHorizontal {
