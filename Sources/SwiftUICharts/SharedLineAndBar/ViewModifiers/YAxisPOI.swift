@@ -87,6 +87,11 @@ internal struct YAxisPOI<T>: ViewModifier where T: CTLineBarChartDataProtocol & 
                                     minValue: minValue)
                     .trim(to: animationValue)
                     .stroke(lineColour, style: strokeStyle)
+                    .padding(
+                        .bottom,
+                        (chartData.viewData.xAxisLabelHeights.max() ?? 0)
+                        + chartData.viewData.xAxisTitleHeight
+                        + chartData.viewData.xAxisLabelPadding)
                 
                 GeometryReader { geo in
                     switch labelPosition {
@@ -94,58 +99,76 @@ internal struct YAxisPOI<T>: ViewModifier where T: CTLineBarChartDataProtocol & 
                         EmptyView()
                     case .yAxis(let specifier, let formatter):
                         
-                        chartData.poiLabelAxis(markerValue: markerValue,
-                                               specifier: specifier,
-                                               formatter: formatter,
-                                               labelFont: labelFont,
-                                               labelColour: labelColour,
-                                               labelBackground: labelBackground,
-                                               labelBorderColor: labelBorderColor,
-                                               customLabelShape: customLabelShape,
-                                               padding: padding)
-                            .position(chartData.poiValueLabelPositionAxis(frame: geo.frame(in: .local), markerValue: markerValue, minValue: minValue, range: range))
-                            .accessibilityLabel(LocalizedStringKey("P-O-I-Marker"))
-                            .accessibilityValue(LocalizedStringKey(String(format: NSLocalizedString("\(markerName) %@", comment: ""), String(format: specifier, markerValue))))
+                        chartData.poiLabelAxis(
+                            markerValue: markerValue,
+                            specifier: specifier,
+                            formatter: formatter,
+                            labelFont: labelFont,
+                            labelColour: labelColour,
+                            labelBackground: labelBackground,
+                            labelBorderColor: labelBorderColor,
+                            customLabelShape: customLabelShape,
+                            padding: padding)
+                        .position(chartData.poiValueLabelPositionAxis(frame: geo.frame(in: .local), markerValue: markerValue, minValue: minValue, range: range))
+                        .accessibilityLabel(LocalizedStringKey("P-O-I-Marker"))
+                        .accessibilityValue(LocalizedStringKey(String(format: NSLocalizedString("\(markerName) %@", comment: ""), String(format: specifier, markerValue))))
                         
                     case .center(let specifier, let formatter):
                         
-                        chartData.poiLabelCenter(markerValue: markerValue,
-                                                 specifier: specifier,
-                                                 formatter: formatter,
-                                                 labelFont: labelFont,
-                                                 labelColour: labelColour,
-                                                 labelBackground: labelBackground,
-                                                 labelBorderColor: labelBorderColor,
-                                                 strokeStyle: strokeStyle,
-                                                 customLabelShape: customLabelShape,
-                                                 padding: padding)
-                            .position(chartData.poiValueLabelPositionCenter(frame: geo.frame(in: .local), markerValue: markerValue, minValue: minValue, range: range))
+                        chartData.poiLabelCenter(
+                            markerValue: markerValue,
+                            specifier: specifier,
+                            formatter: formatter,
+                            labelFont: labelFont,
+                            labelColour: labelColour,
+                            labelBackground: labelBackground,
+                            labelBorderColor: labelBorderColor,
+                            strokeStyle: strokeStyle,
+                            customLabelShape: customLabelShape,
+                            padding: padding)
+                        .position(chartData.poiValueLabelPositionCenter(frame: geo.frame(in: .local), markerValue: markerValue, minValue: minValue, range: range))
                             .accessibilityLabel(LocalizedStringKey("P-O-I-Marker"))
                             .accessibilityValue(LocalizedStringKey(String(format: NSLocalizedString("\(markerName) %@", comment: ""), String(format: specifier, markerValue))))
-                    case .position(location: let location, specifier: let specifier, formatter: let formatter):
+                    case .position(let location, let specifier, let formatter, let offset):
                         
-                        chartData.poiLabelPosition(location: location,
-                                                   markerValue: markerValue,
-                                                   specifier: specifier,
-                                                   formatter: formatter,
-                                                   labelFont: labelFont,
-                                                   labelColour: labelColour,
-                                                   labelBackground: labelBackground,
-                                                   labelBorderColor: labelBorderColor,
-                                                   strokeStyle: strokeStyle,
-                                                   customLabelShape: customLabelShape,
-                                                   padding: padding)
-                            .frame(width: geo.frame(in: .local).width, height: geo.frame(in: .local).height)
-                            .fixedSize()
-                            .position(chartData.poiValueLabelRelativePosition(frame: geo.frame(in: .local), markerValue: markerValue, minValue: minValue, range: range))
-                            .accessibilityLabel(LocalizedStringKey("P-O-I-Marker"))
-                            .accessibilityValue(LocalizedStringKey(String(format: NSLocalizedString("\(markerName) %@", comment: ""), String(format: specifier, markerValue))))
+                        chartData.poiLabelPosition(
+                            location: location,
+                            markerValue: markerValue,
+                            specifier: specifier,
+                            formatter: formatter,
+                            labelFont: labelFont,
+                            labelColour: labelColour,
+                            labelBackground: labelBackground,
+                            labelBorderColor: labelBorderColor,
+                            strokeStyle: strokeStyle,
+                            customLabelShape: customLabelShape,
+                            padding: padding)
+                        .frame(width: geo.frame(in: .local).width, height: geo.frame(in: .local).height)
+                        .fixedSize()
+                        .position(chartData.poiValueLabelRelativePosition(
+                            frame: geo.frame(in: .local),
+                            markerValue: markerValue,
+                            minValue: minValue, range: range))
+                        .offset(offset)
+                        .accessibilityLabel(LocalizedStringKey("P-O-I-Marker"))
+                        .accessibilityValue(LocalizedStringKey(String(format: NSLocalizedString("\(markerName) %@", comment: ""), String(format: specifier, markerValue))))
                     }
                 }
-                .animateOnAppear(disabled: chartData.disableAnimation, using: chartData.chartStyle.globalAnimation) {
+                .padding(
+                    .bottom,
+                    (chartData.viewData.xAxisLabelHeights.max() ?? 0)
+                    + chartData.viewData.xAxisTitleHeight
+                    + chartData.viewData.xAxisLabelPadding)
+                .animateOnAppear(
+                    disabled: chartData.disableAnimation,
+                    using: chartData.chartStyle.globalAnimation)
+                {
                     self.startAnimation = true
                 }
-                .animateOnDisappear(disabled: chartData.disableAnimation, using: chartData.chartStyle.globalAnimation) {
+                .animateOnDisappear(
+                    disabled: chartData.disableAnimation,
+                    using: chartData.chartStyle.globalAnimation)
+                {
                     self.startAnimation = false
                 }
             } else { content }

@@ -119,7 +119,7 @@ internal struct XAxisPOI<T>: ViewModifier where T: CTLineBarChartDataProtocol & 
                             .accessibilityLabel(LocalizedStringKey("P-O-I-Marker"))
                             .accessibilityValue(LocalizedStringKey(String(format: NSLocalizedString("\(self.markerName) %@", comment: ""), "\(markerValue)")))
 
-                    case .position(location: let location, _, _):
+                    case .position(let location, _, _, let offset):
                         
                         chartData.poiAbscissaLabelPosition(location: location,
                                                            marker: markerName,
@@ -135,6 +135,7 @@ internal struct XAxisPOI<T>: ViewModifier where T: CTLineBarChartDataProtocol & 
                             .position(chartData.poiAbscissaValueLabelRelativePosition(frame: geo.frame(in: .local),
                                                                                     markerValue: markerValue,
                                                                                     count: dataPointCount))
+                            .offset(offset)
                             .accessibilityLabel(LocalizedStringKey("P-O-I-Marker"))
                             .accessibilityValue(LocalizedStringKey(String(format: NSLocalizedString("\(self.markerName) %@", comment: ""), "\(markerValue)")))
                     }

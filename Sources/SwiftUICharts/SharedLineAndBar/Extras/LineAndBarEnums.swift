@@ -69,7 +69,7 @@ public enum DisplayValue {
     /// Places the label in the center of chart.
     case center(specifier: String, formatter: NumberFormatter? = nil)
     /// Places the label in between the graph at a certain distance from the axis,  i.e. 0 places it on the leading edge and 1 places it on the trailing edge. Defaults to 0.5 if location >1 or <0
-    case position(location: CGFloat, specifier: String, formatter: NumberFormatter? = nil)
+    case position(location: CGFloat, specifier: String, formatter: NumberFormatter? = nil, offset: CGSize)
     
 }
 
