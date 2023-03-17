@@ -57,7 +57,8 @@ internal struct ColourBar<CD: CTBarChartDataProtocol & GetDataProtocol,
     }
     
     func frameAnimationValue(_ value: Double, height: CGFloat) -> CGFloat {
-        let value = BarLayout.barHeight(height, Double(value), chartData.maxValue)
+        var value = BarLayout.barHeight(height, Double(value), chartData.maxValue) - chartData.chartStyle.yAxisGridStyle.lineWidth
+        if value < 0 { value = 0 }
         if chartData.disableAnimation {
             return value
         } else {
@@ -130,7 +131,8 @@ internal struct GradientColoursBar<CD: CTBarChartDataProtocol & GetDataProtocol,
     }
     
     func frameAnimationValue(_ value: Double, height: CGFloat) -> CGFloat {
-        let value = BarLayout.barHeight(height, Double(value), chartData.maxValue)
+        var value = BarLayout.barHeight(height, Double(value), chartData.maxValue) - chartData.chartStyle.yAxisGridStyle.lineWidth
+        if value < 0 { value = 0 }
         if chartData.disableAnimation {
             return value
         } else {
@@ -204,7 +206,8 @@ internal struct GradientStopsBar<CD: CTBarChartDataProtocol & GetDataProtocol,
     }
     
     func frameAnimationValue(_ value: Double, height: CGFloat) -> CGFloat {
-        let value = BarLayout.barHeight(height, Double(value), chartData.maxValue)
+        var value = BarLayout.barHeight(height, Double(value), chartData.maxValue) - chartData.chartStyle.yAxisGridStyle.lineWidth
+        if value < 0 { value = 0 }
         if chartData.disableAnimation {
             return value
         } else {
