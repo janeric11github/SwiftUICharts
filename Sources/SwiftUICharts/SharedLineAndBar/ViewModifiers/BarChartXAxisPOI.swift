@@ -70,7 +70,7 @@ internal struct BarChartXAxisPOI: ViewModifier {
             chartData: chartData,
             index: index,
             radius: pointStyle.pointSize / 2)
-        .stroke(
+        .strokeBorder(
             pointStyle.borderColour,
             lineWidth: pointStyle.lineWidth)
         .opacity(animationValue)

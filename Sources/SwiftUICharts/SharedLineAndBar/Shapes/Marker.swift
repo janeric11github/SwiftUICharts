@@ -172,10 +172,11 @@ internal struct BarChartVerticalAbscissaMarker: Shape {
     }
 }
 
-internal struct BarChartPointMarker: Shape {
+internal struct BarChartPointMarker: InsettableShape {
     @ObservedObject private var chartData: BarChartData
     private let index: Int
     private let radius: CGFloat
+    private var insetAmount: CGFloat = 0
     
     internal init(
         chartData: BarChartData,
@@ -190,12 +191,14 @@ internal struct BarChartPointMarker: Shape {
     internal func path(in rect: CGRect) -> Path {
         guard let point = getPoint(index: index, rect: rect) else { return Path() }
         
+        let insetRadius = radius - insetAmount
+        
         var path = Path()
         path.addEllipse(in: .init(
-            x: point.x - radius,
-            y: point.y - radius,
-            width: radius * 2,
-            height: radius * 2))
+            x: point.x - insetRadius,
+            y: point.y - insetRadius,
+            width: insetRadius * 2,
+            height: insetRadius * 2))
         return path
     }
     
@@ -215,5 +218,11 @@ internal struct BarChartPointMarker: Shape {
             y = (chartSize.height - (CGFloat(value) * ySection) + (CGFloat(minValue) * ySection))
         }
         return CGPoint(x: x, y: y)
+    }
+    
+    func inset(by amount: CGFloat) -> some InsettableShape {
+        var insetSelf = self
+        insetSelf.insetAmount += amount
+        return insetSelf
     }
 }
