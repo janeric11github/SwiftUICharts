@@ -7,29 +7,48 @@
 
 import SwiftUI
 
+public enum XAxisGridDistribution {
+    case equalSpacing, equalProportion
+}
 /**
  Adds vertical lines along the X axis.
  */
 internal struct XAxisGrid<T>: ViewModifier where T: CTLineBarChartDataProtocol {
     
     @ObservedObject private var chartData: T
+    let distribution: XAxisGridDistribution
     
-    internal init(chartData: T) {
+    internal init(chartData: T, distribution: XAxisGridDistribution) {
         self.chartData = chartData
+        self.distribution = distribution
     }
     
     internal func body(content: Content) -> some View {
         ZStack {
             if chartData.isGreaterThanTwo() {
-                HStack {
-                    ForEach((0...chartData.chartStyle.xAxisGridStyle.numberOfLines-1), id: \.self) { index in
-                        if index != 0 {
+                switch distribution {
+                case .equalSpacing:
+                    HStack(spacing: 0.0) {
+                        ForEach((0...chartData.chartStyle.xAxisGridStyle.numberOfLines-1), id: \.self) { index in
                             VerticalGridView(chartData: chartData)
-                            Spacer()
-                                .frame(minWidth: 0, maxWidth: 500)
+                            if index != chartData.chartStyle.xAxisGridStyle.numberOfLines-1 {
+                                Spacer()
+                                    .frame(minWidth: 0, maxWidth: 500)
+                            }
                         }
                     }
-                    VerticalGridView(chartData: chartData)
+                case .equalProportion:
+                    HStack(spacing: 0.0) {
+                        ForEach((0...chartData.chartStyle.xAxisGridStyle.numberOfLines-1), id: \.self) { index in
+                            HStack(spacing: 0.0) {
+                                Spacer()
+                                    .frame(minWidth: 0, maxWidth: 500)
+                                VerticalGridView(chartData: chartData)
+                                Spacer()
+                                    .frame(minWidth: 0, maxWidth: 500)
+                            }
+                        }
+                    }
                 }
                 content
             } else { content }
@@ -63,7 +82,10 @@ extension View {
      - Parameter chartData: Chart data model.
      - Returns: A  new view containing the chart with vertical lines under it.
      */
-    public func xAxisGrid<T: CTLineBarChartDataProtocol>(chartData: T) -> some View {
-        self.modifier(XAxisGrid(chartData: chartData))
+    public func xAxisGrid<T: CTLineBarChartDataProtocol>(
+        chartData: T,
+        distribution: XAxisGridDistribution = .equalSpacing) -> some View
+    {
+        self.modifier(XAxisGrid(chartData: chartData, distribution: distribution))
     }
 }
