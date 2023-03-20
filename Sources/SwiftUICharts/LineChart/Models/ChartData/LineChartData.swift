@@ -191,6 +191,7 @@ extension LineChartData {
                 }
             }
             if let data = self.extraLineData,
+               data.showsInfo,
                let point = data.getDataPoint(touchLocation: touchLocation, chartSize: chartSize) {
                 var dp = LineChartDataPoint(value: point.value, description: point.pointDescription)
                 dp.legendTag = data.legendTitle

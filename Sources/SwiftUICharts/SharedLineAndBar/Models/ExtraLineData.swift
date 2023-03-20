@@ -19,16 +19,18 @@ public struct ExtraLineData: Identifiable {
     public var dataPoints: [ExtraLineDataPoint]
     public var style: ExtraLineStyle
     public var legendTitle: String
+    public var showsInfo: Bool
     
     public init(
         legendTitle: String,
         dataPoints: () -> ([ExtraLineDataPoint]),
-        style: () -> (ExtraLineStyle)
+        style: () -> (ExtraLineStyle),
+        showsInfo: Bool
     ) {
         self.dataPoints = dataPoints()
         self.style = style()
         self.legendTitle = legendTitle
-        
+        self.showsInfo = showsInfo
     }
     
     internal func getTouchInteraction(touchLocation: CGPoint, chartSize: CGRect) -> some View {

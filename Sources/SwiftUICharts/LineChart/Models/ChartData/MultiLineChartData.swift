@@ -197,6 +197,7 @@ extension MultiLineChartData {
             let index = Int((touchLocation.x + (xSection / 2)) / xSection)
             if index >= 0 && index < dataSets.dataSets[setIndex].dataPoints.count {
                 if let data = self.extraLineData,
+                   data.showsInfo,
                    let point = data.getDataPoint(touchLocation: touchLocation, chartSize: chartSize) {
                     var dp = LineChartDataPoint(value: point.value, xAxisLabel: point.pointDescription, description: point.pointDescription)
                     dp.legendTag = data.legendTitle

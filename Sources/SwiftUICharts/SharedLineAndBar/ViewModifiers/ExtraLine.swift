@@ -16,12 +16,14 @@ internal struct ExtraLine<T>: ViewModifier where T: CTLineBarChartDataProtocol {
         chartData: T,
         legendTitle: String,
         datapoints: @escaping ()->([ExtraLineDataPoint]),
-        style: @escaping ()->(ExtraLineStyle)
+        style: @escaping ()->(ExtraLineStyle),
+        showsInfo: Bool
     ) {
         self.chartData = chartData
         self.chartData.extraLineData = ExtraLineData(legendTitle: legendTitle,
                                                      dataPoints: datapoints,
-                                                     style: style)
+                                                     style: style,
+                                                     showsInfo: showsInfo)
         self.lineLegendSetup()
     }
     
@@ -140,12 +142,14 @@ extension View {
         chartData: T,
         legendTitle: String,
         datapoints: @escaping () -> ([ExtraLineDataPoint]),
-        style: @escaping () -> (ExtraLineStyle)
+        style: @escaping () -> (ExtraLineStyle),
+        showsInfo: Bool = true
     ) -> some View {
         self.modifier(ExtraLine<T>(chartData: chartData,
                                    legendTitle: legendTitle,
                                    datapoints: datapoints,
-                                   style: style)
+                                   style: style,
+                                   showsInfo: showsInfo)
         )
     }
     
@@ -166,12 +170,14 @@ extension View {
         chartData: T,
         legendTitle: String,
         datapoints: @escaping @autoclosure () -> ([ExtraLineDataPoint]),
-        style: @escaping @autoclosure () -> (ExtraLineStyle)
+        style: @escaping @autoclosure () -> (ExtraLineStyle),
+        showsInfo: Bool = true
     ) -> some View {
         self.modifier(ExtraLine<T>(chartData: chartData,
                                    legendTitle: legendTitle,
                                    datapoints: datapoints,
-                                   style: style)
+                                   style: style,
+                                   showsInfo: showsInfo)
         )
     }
 }

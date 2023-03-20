@@ -135,6 +135,7 @@ public final class BarChartData: CTBarChartDataProtocol, GetDataProtocol, Publis
             dataSets.dataPoints[index].legendTag = dataSets.legendTitle
             self.infoView.touchOverlayInfo = [dataSets.dataPoints[index]]
             if let data = self.extraLineData,
+               data.showsInfo,
                let point = data.getDataPoint(touchLocation: touchLocation, chartSize: chartSize) {
                 var dp = BarChartDataPoint(value: point.value, description: point.pointDescription)
                 dp.legendTag = data.legendTitle

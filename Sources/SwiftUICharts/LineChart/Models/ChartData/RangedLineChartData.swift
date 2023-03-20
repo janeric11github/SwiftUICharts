@@ -191,6 +191,7 @@ public final class RangedLineChartData: CTLineChartDataProtocol, GetDataProtocol
                 }
             }
             if let data = self.extraLineData,
+               data.showsInfo,
                let point = data.getDataPoint(touchLocation: touchLocation, chartSize: chartSize) {
                 var dp = RangedLineChartDataPoint(value: point.value, upperValue: point.value, lowerValue: point.value, description: point.pointDescription)
                 dp.legendTag = data.legendTitle

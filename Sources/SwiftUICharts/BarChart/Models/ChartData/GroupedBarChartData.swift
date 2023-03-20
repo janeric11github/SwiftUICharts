@@ -167,6 +167,7 @@ public final class GroupedBarChartData: CTMultiBarChartDataProtocol, GetDataProt
                 dataSets.dataSets[index].dataPoints[subIndex].legendTag = dataSets.dataSets[index].setTitle
                 self.infoView.touchOverlayInfo = [dataSets.dataSets[index].dataPoints[subIndex]]
                 if let data = self.extraLineData,
+                   data.showsInfo,
                    let point = data.getDataPoint(touchLocation: touchLocation, chartSize: chartSize) {
                     var dp = GroupedBarDataPoint(value: point.value, description: point.pointDescription, group: GroupingData(title: data.legendTitle, colour: ColourStyle()))
                     dp.legendTag = data.legendTitle
