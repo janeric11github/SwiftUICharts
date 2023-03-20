@@ -131,3 +131,89 @@ internal struct HorizontalAbscissaMarker<ChartData>: Shape where ChartData: CTLi
         return path
     }
 }
+
+internal struct BarChartVerticalAbscissaMarker: Shape {
+    @ObservedObject private var chartData: BarChartData
+    private let index: Int
+    
+    internal init(
+        chartData: BarChartData,
+        index: Int
+    ) {
+        self.chartData = chartData
+        self.index = index
+    }
+    
+    internal func path(in rect: CGRect) -> Path {
+        guard let point = getPoint(index: index, rect: rect) else { return Path() }
+        
+        var path = Path()
+        path.move(to: .init(x: point.x, y: rect.height - chartData.chartStyle.yAxisGridStyle.lineWidth))
+        path.addLine(to: .init(x: point.x, y: point.y))
+        return path
+    }
+    
+    private func getPoint(index: Int, rect: CGRect) -> CGPoint? {
+        let dataPoints = chartData.dataSets.dataPoints
+        let chartSize = rect.size
+        let minValue = chartData.minValue
+        let maxValue = chartData.maxValue
+        guard index >= 0, index < dataPoints.count else { return nil }
+        let value = dataPoints[index].value
+        let xSection: CGFloat = chartSize.width / CGFloat(dataPoints.count)
+        var ySection: CGFloat = chartSize.height / CGFloat(maxValue)
+        let x = (CGFloat(index) * xSection) + (xSection / 2)
+        var y = (chartSize.height - CGFloat(value) * ySection)
+        if minValue.isLess(than: 0) {
+            ySection = chartSize.height / (CGFloat(maxValue) - CGFloat(minValue))
+            y = (chartSize.height - (CGFloat(value) * ySection) + (CGFloat(minValue) * ySection))
+        }
+        return CGPoint(x: x, y: y)
+    }
+}
+
+internal struct BarChartPointMarker: Shape {
+    @ObservedObject private var chartData: BarChartData
+    private let index: Int
+    private let radius: CGFloat
+    
+    internal init(
+        chartData: BarChartData,
+        index: Int,
+        radius: CGFloat
+    ) {
+        self.chartData = chartData
+        self.index = index
+        self.radius = radius
+    }
+    
+    internal func path(in rect: CGRect) -> Path {
+        guard let point = getPoint(index: index, rect: rect) else { return Path() }
+        
+        var path = Path()
+        path.addEllipse(in: .init(
+            x: point.x - radius,
+            y: point.y - radius,
+            width: radius * 2,
+            height: radius * 2))
+        return path
+    }
+    
+    private func getPoint(index: Int, rect: CGRect) -> CGPoint? {
+        let dataPoints = chartData.dataSets.dataPoints
+        let chartSize = rect.size
+        let minValue = chartData.minValue
+        let maxValue = chartData.maxValue
+        guard index >= 0, index < dataPoints.count else { return nil }
+        let value = dataPoints[index].value
+        let xSection: CGFloat = chartSize.width / CGFloat(dataPoints.count)
+        var ySection: CGFloat = chartSize.height / CGFloat(maxValue)
+        let x = (CGFloat(index) * xSection) + (xSection / 2)
+        var y = (chartSize.height - CGFloat(value) * ySection)
+        if minValue.isLess(than: 0) {
+            ySection = chartSize.height / (CGFloat(maxValue) - CGFloat(minValue))
+            y = (chartSize.height - (CGFloat(value) * ySection) + (CGFloat(minValue) * ySection))
+        }
+        return CGPoint(x: x, y: y)
+    }
+}
