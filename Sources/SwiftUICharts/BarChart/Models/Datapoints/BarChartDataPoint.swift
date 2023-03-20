@@ -17,6 +17,7 @@ public struct BarChartDataPoint: CTStandardBarDataPoint {
     public let id = UUID()
     public var value: Double
     public var xAxisLabel: String?
+    public var showsXAxisGridLine: Bool
     public var description: String?
     public var date: Date?
     public var colour: ColourStyle
@@ -33,12 +34,14 @@ public struct BarChartDataPoint: CTStandardBarDataPoint {
     public init(
         value: Double,
         xAxisLabel: String? = nil,
+        showsXAxisGridLine: Bool = true,
         description: String? = nil,
         date: Date? = nil,
         colour: ColourStyle = ColourStyle(colour: .red)
     ) {
         self.value = value
         self.xAxisLabel = xAxisLabel
+        self.showsXAxisGridLine = showsXAxisGridLine
         self.description = description
         self.date = date
         self.colour = colour
